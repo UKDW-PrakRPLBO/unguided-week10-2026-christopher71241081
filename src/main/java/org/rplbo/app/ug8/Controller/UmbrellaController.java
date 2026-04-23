@@ -11,6 +11,7 @@ import org.rplbo.app.ug8.UmbrellaApp;
 import org.rplbo.app.ug8.UmbrellaDBManager;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class UmbrellaController implements Initializable {
@@ -38,9 +39,10 @@ public class UmbrellaController implements Initializable {
         // ==============================================================================
 
         // --- TULIS KODE ANDA DI BAWAH INI ---
-
-
-
+        colName.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+        colInitial.setCellValueFactory(new PropertyValueFactory<>("initialStock"));
+        colSupply.setCellValueFactory(new PropertyValueFactory<>("newSupply"));
+        colFinal.setCellValueFactory(new PropertyValueFactory<>("finalStock"));
 
         // ==============================================================================
         // TODO 2: LISTENER KLIK BARIS TABEL (SELECTION MODEL)
@@ -58,9 +60,11 @@ public class UmbrellaController implements Initializable {
         tableInventory.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 // --- TULIS KODE ANDA DI BAWAH INI ---
-
-
-
+                selectedItem = newVal;
+                txtItem.setText(newVal.getItemName());
+                txtInitial.setText(String.valueOf(newVal.getInitialStock()));
+                txtSupply.setText(String.valueOf(newVal.getNewSupply()));
+                txtItem.setDisable(true);
             }
         });
 
@@ -84,8 +88,18 @@ public class UmbrellaController implements Initializable {
         // ==============================================================================
 
         // --- TULIS KODE ANDA DI BAWAH INI ---
+        if (selectedItem != null) {
+            int initial = Integer.parseInt(txtInitial.getText());
+            int supply = Integer.parseInt(txtSupply.getText());
+            int finalStock = initial + supply;
 
+            InventoryItem updatedItem = new InventoryItem(selectedItem.getItemName(), initial, supply, finalStock);
 
+            if (db.updateItem(updatedItem)) {
+                refreshTable();
+                clearFields();
+            }
+        }
     }
 
     @FXML
@@ -103,8 +117,15 @@ public class UmbrellaController implements Initializable {
         // ==============================================================================
 
         // --- TULIS KODE ANDA DI BAWAH INI ---
+        int initial = Integer.parseInt(txtInitial.getText());
+        int supply = Integer.parseInt(txtSupply.getText());
+        int finalStock = initial + supply;
+        String name = txtItem.getText();
 
-
+        InventoryItem newItem = new InventoryItem(name, initial, supply, finalStock);
+        db.addItem(newItem);
+        refreshTable();
+        clearFields();
     }
 
     @FXML
@@ -123,8 +144,29 @@ public class UmbrellaController implements Initializable {
         // ==============================================================================
 
         // --- TULIS KODE ANDA DI BAWAH INI ---
+        InventoryItem itemToDelete = tableInventory.getSelectionModel().getSelectedItem();
 
+        if (itemToDelete != null) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation");
+            alert.setHeaderText("Delete Inventory");
+            alert.setContentText("Are you sure you want to delete " + itemToDelete.getItemName() + "?");
 
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                if (db.deleteItem(itemToDelete.getItemName())) {
+                    masterData.remove(itemToDelete);
+                    clearFields();
+                    refreshTable();
+                }
+            }
+        } else {
+            Alert warning = new Alert(Alert.AlertType.WARNING);
+            warning.setTitle("No Selection");
+            warning.setHeaderText(null);
+            warning.setContentText("Please select an item in the table first.");
+            warning.showAndWait();
+        }
     }
 
     // Logout

@@ -5,6 +5,8 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.geometry.Insets?>
 
 <!--Buatlah Semirip mungkin, bebas asalkan jalan-->
 
@@ -12,4 +14,45 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.rplbo.app.ug8.Controller.LoginController"
             prefHeight="400.0" prefWidth="600.0">
+    <children>
+        <VBox alignment="CENTER" layoutX="150.0" layoutY="60.0" prefHeight="280.0" prefWidth="300.0" spacing="15.0">
+            <children>
+                <Label text="UMBRELLA CORP - SECTOR B">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                </Label>
+<!--                <Label text="Sector B - Secure Terminal">-->
+<!--                    <font>-->
+<!--                        <Font size="14.0" />-->
+<!--                    </font>-->
+<!--                    <VBox.margin>-->
+<!--                        <Insets bottom="10.0" />-->
+<!--                    </VBox.margin>-->
+<!--                </Label>-->
+
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="OPERATIVE ID:" />
+                        <TextField fx:id="txtUsername" promptText="Enter Agent ID (e.g., hunk)" />
+                    </children>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="PASSCODE:" />
+                        <PasswordField fx:id="txtPassword" promptText="Enter Password" />
+                    </children>
+                </VBox>
+
+                <Button mnemonicParsing="false" onAction="#handleLogin" prefHeight="35.0" prefWidth="300.0" text="AUTHENTICATE" />
+
+                <Label fx:id="lblStatus" textFill="#d00000">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>

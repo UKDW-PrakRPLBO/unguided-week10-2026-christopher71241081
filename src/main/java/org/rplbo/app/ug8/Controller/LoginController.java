@@ -26,7 +26,25 @@ public class LoginController {
         // ==============================================================================
 
         // --- TULIS KODE ANDA DI BAWAH INI ---
+        String username = txtUsername.getText();
+        String password = txtPassword.getText();
 
+        UmbrellaDBManager dbManager = new UmbrellaDBManager();
 
+        // Asumsi validateUser(user, pass) mengembalikan String nama user jika berhasil, atau null jika gagal.
+        String validUser = dbManager.validateUser(username, password);
+
+        if (validUser != null) {
+            UmbrellaApp.loggedInUser = validUser;
+            try {
+                UmbrellaApp.switchScene("umbrella-view.fxml");
+            } catch (Exception e) {
+                // Menangkap error jika fxml gagal dimuat (biasanya minta IOException)
+                System.out.println("Gagal memuat scene: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            lblStatus.setText("AUTHENTICATION FAILED");
+        }
     }
 }
